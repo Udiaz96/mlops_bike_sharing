@@ -238,7 +238,7 @@ class ColumnDropperTransformer(BaseEstimator, TransformerMixin):
 
     COLS_TO_DROP = [
         'cnt', 'casual', 'registered', 
-        'dteday', 'casual_log', 'registered_log'
+        'dteday' #, 'casual_log', 'registered_log'
     ]
 
     def fit(self, X, y=None):
