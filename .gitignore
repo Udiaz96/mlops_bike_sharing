@@ -43,3 +43,14 @@ $RECYCLE.BIN/
 
 # mlflow artifacts handled in dvc
 mlartifacts/
+
+# Ignora archivos grandes de MLflow gestionados por DVC
+mlruns/**/artifacts/
+mlruns/models/*/version-*/
+*.dvc.lock
+
+# Mantener metadatos en Git
+!mlruns/**/*.yaml
+!mlruns/**/metrics/
+!mlruns/**/params/
+!mlruns/**/tags/
