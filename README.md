@@ -55,6 +55,54 @@ Componentes Clave:
 └── .dvc/             (Configuración de DVC)
 ```
 
+## Reproducibilidad
+
+Parar reproducir los diferentes "stages" del proyecto se utilizó dvc
+
+                         +----------------------------------------+             +----------------------------------------+
+                         | data/raw/bike_sharing_modified.csv.dvc |             | data/raw/bike_sharing_original.csv.dvc |
+                         +----------------------------------------+             +----------------------------------------+
+                                                          ****                       *****
+                                                              *****              ****
+                                                                   ***        ***
+                                                                 +---------------+
+                                                                 | data_cleaning |
+                                                                 +---------------+
+                                                                         *
+                                                                         *
+                                                                         *
+                                                              +---------------------+
+                                                          ****| feature_engineering |*****
+                                                **********    +---------------------+*    **********
+                                      **********          *****            *          ******        ***********
+                            **********                ****                  *               *****              **********
+                      ******                       ***                      *                    ***                     ******
++---------------------+             +-------------------+             +-----------+             +---------------+             +----------------+
+| train_random_forest |             | train_elastic_net |             | train_svr |             | train_xgboost |             | train_lightgbm |
++---------------------+             +-------------------+             +-----------+             +---------------+             +----------------+
++------------------------+
+| mlruns/mlartifacts.dvc |
++------------------------+
+
+
+Para observar el diagrama utiliza
+
+```bash
+dvc dag
+```
+
+Se puede ejecutar el pipeline entero usando 
+
+```bash
+dvc repro
+```
+
+También se puede ejecutar un solo tipo de modelo usando 
+
+```bash
+dvc repro train_xgboost
+```
+
 ## Baja el repositorio 
 
 ```bash
