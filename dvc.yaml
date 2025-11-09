@@ -1,0 +1,79 @@
+stages:
+  # ============================================================================
+  # DATA PROCESSING PIPELINE
+  # ============================================================================
+
+  data_cleaning:
+    cmd: python -m bike_sharing.dataset
+    deps:
+      - bike_sharing/dataset.py
+      - data/raw/bike_sharing_modified.csv
+      - data/raw/bike_sharing_original.csv
+    params:
+      - data_cleaning
+    outs:
+      - data/processed/bike_sharing_cleaned.csv
+
+  feature_engineering:
+    cmd: python -m bike_sharing.features
+    deps:
+      - bike_sharing/features.py
+      - data/processed/bike_sharing_cleaned.csv
+    params:
+      - feature_engineering
+    outs:
+      - data/processed/bike_sharing_transformed.csv
+
+  # ============================================================================
+  # MODEL TRAINING PIPELINE (5 stages - one per model type)
+  # ============================================================================
+
+  train_random_forest:
+    cmd: python -m bike_sharing.modeling.train random_forest --batch
+    deps:
+      - bike_sharing/modeling/train.py
+      - data/processed/bike_sharing_transformed.csv
+    params:
+      - train
+      - mlflow
+      - models.random_forest
+
+  train_elastic_net:
+    cmd: python -m bike_sharing.modeling.train elastic_net --batch
+    deps:
+      - bike_sharing/modeling/train.py
+      - data/processed/bike_sharing_transformed.csv
+    params:
+      - train
+      - mlflow
+      - models.elastic_net
+
+  train_svr:
+    cmd: python -m bike_sharing.modeling.train svr --batch
+    deps:
+      - bike_sharing/modeling/train.py
+      - data/processed/bike_sharing_transformed.csv
+    params:
+      - train
+      - mlflow
+      - models.svr
+
+  train_xgboost:
+    cmd: python -m bike_sharing.modeling.train xgboost --batch
+    deps:
+      - bike_sharing/modeling/train.py
+      - data/processed/bike_sharing_transformed.csv
+    params:
+      - train
+      - mlflow
+      - models.xgboost
+
+  train_lightgbm:
+    cmd: python -m bike_sharing.modeling.train lightgbm --batch
+    deps:
+      - bike_sharing/modeling/train.py
+      - data/processed/bike_sharing_transformed.csv
+    params:
+      - train
+      - mlflow
+      - models.lightgbm

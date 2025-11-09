@@ -1,0 +1,245 @@
+schema: '2.0'
+stages:
+  data_cleaning:
+    cmd: python -m bike_sharing.dataset
+    deps:
+    - path: bike_sharing/dataset.py
+      hash: md5
+      md5: 0856a100747fb4d41a9714aab4480f83
+      size: 27737
+    - path: data/raw/bike_sharing_modified.csv
+      hash: md5
+      md5: 1484028223d304a18ddd9ce33a1af441
+      size: 1686247
+    - path: data/raw/bike_sharing_original.csv
+      hash: md5
+      md5: 7747b2efcdd3801b83c1cfce2d600c15
+      size: 1144308
+    params:
+      params.yaml:
+        data_cleaning:
+          input_path: data/raw/bike_sharing_modified.csv
+          original_path: data/raw/bike_sharing_original.csv
+          output_path: data/processed/bike_sharing_cleaned.csv
+    outs:
+    - path: data/processed/bike_sharing_cleaned.csv
+      hash: md5
+      md5: b630a13d1a4ba8d60b07de4b6b42113b
+      size: 1168790
+  feature_engineering:
+    cmd: python -m bike_sharing.features
+    deps:
+    - path: bike_sharing/features.py
+      hash: md5
+      md5: 137f8ecc9f4002ea2a7ed0bc88b402bc
+      size: 7644
+    - path: data/processed/bike_sharing_cleaned.csv
+      hash: md5
+      md5: b630a13d1a4ba8d60b07de4b6b42113b
+      size: 1168790
+    params:
+      params.yaml:
+        feature_engineering:
+          input_path: data/processed/bike_sharing_cleaned.csv
+          output_path: data/processed/bike_sharing_transformed.csv
+    outs:
+    - path: data/processed/bike_sharing_transformed.csv
+      hash: md5
+      md5: 9054add26646194ac5f6e48c10d24eb9
+      size: 10379861
+  train_random_forest:
+    cmd: python -m bike_sharing.modeling.train random_forest --batch
+    deps:
+    - path: bike_sharing/modeling/train.py
+      hash: md5
+      md5: f3b006fb7c637023d2024b32b1d1fe7f
+      size: 10844
+    - path: data/processed/bike_sharing_transformed.csv
+      hash: md5
+      md5: 9054add26646194ac5f6e48c10d24eb9
+      size: 10379861
+    params:
+      params.yaml:
+        mlflow:
+          experiment_name: Bike_Sharing_DVC_Pipeline
+        models.random_forest:
+          model_class: RandomForestRegressor
+          configs:
+          - n_estimators: 100
+            max_depth: 10
+            random_state: 42
+            n_jobs: -1
+          - n_estimators: 200
+            max_depth: 20
+            random_state: 42
+            n_jobs: -1
+          - n_estimators: 300
+            max_depth: 15
+            min_samples_leaf: 2
+            random_state: 42
+            n_jobs: -1
+          - n_estimators: 500
+            max_depth: 15
+            random_state: 42
+            n_jobs: -1
+          - n_estimators: 500
+            max_depth: 25
+            min_samples_leaf: 1
+            random_state: 42
+            n_jobs: -1
+          - n_estimators: 300
+            max_depth: 18
+            min_samples_leaf: 2
+            min_samples_split: 5
+            random_state: 42
+            n_jobs: -1
+        train:
+          input_path: data/processed/bike_sharing_transformed.csv
+          test_size: 0.2
+          random_state: 42
+  train_elastic_net:
+    cmd: python -m bike_sharing.modeling.train elastic_net --batch
+    deps:
+    - path: bike_sharing/modeling/train.py
+      hash: md5
+      md5: f3b006fb7c637023d2024b32b1d1fe7f
+      size: 10844
+    - path: data/processed/bike_sharing_transformed.csv
+      hash: md5
+      md5: 9054add26646194ac5f6e48c10d24eb9
+      size: 10379861
+    params:
+      params.yaml:
+        mlflow:
+          experiment_name: Bike_Sharing_DVC_Pipeline
+        models.elastic_net:
+          model_class: ElasticNet
+          configs:
+          - alpha: 0.1
+            l1_ratio: 0.5
+            random_state: 42
+            max_iter: 10000
+          - alpha: 0.001
+            l1_ratio: 0.8
+            random_state: 42
+            max_iter: 10000
+          - alpha: 0.1
+            l1_ratio: 0.6
+            random_state: 42
+            max_iter: 10000
+          - alpha: 0.005
+            l1_ratio: 0.9
+            random_state: 42
+            max_iter: 10000
+        train:
+          input_path: data/processed/bike_sharing_transformed.csv
+          test_size: 0.2
+          random_state: 42
+  train_svr:
+    cmd: python -m bike_sharing.modeling.train svr --batch
+    deps:
+    - path: bike_sharing/modeling/train.py
+      hash: md5
+      md5: f3b006fb7c637023d2024b32b1d1fe7f
+      size: 10844
+    - path: data/processed/bike_sharing_transformed.csv
+      hash: md5
+      md5: 9054add26646194ac5f6e48c10d24eb9
+      size: 10379861
+    params:
+      params.yaml:
+        mlflow:
+          experiment_name: Bike_Sharing_DVC_Pipeline
+        models.svr:
+          model_class: SVR
+          configs:
+          - kernel: rbf
+            C: 10
+            epsilon: 0.1
+          - kernel: rbf
+            C: 1
+            epsilon: 0.05
+        train:
+          input_path: data/processed/bike_sharing_transformed.csv
+          test_size: 0.2
+          random_state: 42
+  train_xgboost:
+    cmd: python -m bike_sharing.modeling.train xgboost --batch
+    deps:
+    - path: bike_sharing/modeling/train.py
+      hash: md5
+      md5: f3b006fb7c637023d2024b32b1d1fe7f
+      size: 10844
+    - path: data/processed/bike_sharing_transformed.csv
+      hash: md5
+      md5: 9054add26646194ac5f6e48c10d24eb9
+      size: 10379861
+    params:
+      params.yaml:
+        mlflow:
+          experiment_name: Bike_Sharing_DVC_Pipeline
+        models.xgboost:
+          model_class: XGBRegressor
+          configs:
+          - n_estimators: 150
+            max_depth: 5
+            random_state: 42
+            learning_rate: 0.1
+          - n_estimators: 300
+            max_depth: 7
+            random_state: 42
+            learning_rate: 0.05
+          - n_estimators: 400
+            max_depth: 6
+            random_state: 42
+            learning_rate: 0.03
+          - n_estimators: 500
+            max_depth: 5
+            random_state: 42
+            learning_rate: 0.05
+        train:
+          input_path: data/processed/bike_sharing_transformed.csv
+          test_size: 0.2
+          random_state: 42
+  train_lightgbm:
+    cmd: python -m bike_sharing.modeling.train lightgbm --batch
+    deps:
+    - path: bike_sharing/modeling/train.py
+      hash: md5
+      md5: f3b006fb7c637023d2024b32b1d1fe7f
+      size: 10844
+    - path: data/processed/bike_sharing_transformed.csv
+      hash: md5
+      md5: 9054add26646194ac5f6e48c10d24eb9
+      size: 10379861
+    params:
+      params.yaml:
+        mlflow:
+          experiment_name: Bike_Sharing_DVC_Pipeline
+        models.lightgbm:
+          model_class: LGBMRegressor
+          configs:
+          - n_estimators: 150
+            max_depth: 10
+            random_state: 42
+            learning_rate: 0.1
+            n_jobs: -1
+          - n_estimators: 300
+            max_depth: 15
+            random_state: 42
+            learning_rate: 0.05
+            n_jobs: -1
+          - n_estimators: 400
+            max_depth: 12
+            random_state: 42
+            learning_rate: 0.03
+            n_jobs: -1
+          - n_estimators: 600
+            max_depth: 15
+            random_state: 42
+            learning_rate: 0.05
+            n_jobs: -1
+        train:
+          input_path: data/processed/bike_sharing_transformed.csv
+          test_size: 0.2
+          random_state: 42
