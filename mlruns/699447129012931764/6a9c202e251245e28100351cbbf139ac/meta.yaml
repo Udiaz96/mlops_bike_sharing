@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/joel/Projects/tec/mlops/bike_sharing/mlruns/699447129012931764/6a9c202e251245e28100351cbbf139ac/artifacts
+end_time: 1762648600330
+entry_point_name: ''
+experiment_id: '699447129012931764'
+lifecycle_stage: active
+run_id: 6a9c202e251245e28100351cbbf139ac
+run_name: XGBRegressor_n_estimators-150_max_depth-5_learning_rate-0.1_(Double-Pred)
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762648596735
+status: 3
+tags: []
+user_id: joel

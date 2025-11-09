@@ -1,0 +1,10 @@
+artifact_location: file:///Users/joel/Projects/tec/mlops/bike_sharing/mlruns/699447129012931764/models/m-bd9cbc1bf9324b33825e6b6a5b1e8e11/artifacts
+creation_timestamp: 1762648535134
+experiment_id: '699447129012931764'
+last_updated_timestamp: 1762648536694
+model_id: m-bd9cbc1bf9324b33825e6b6a5b1e8e11
+model_type: null
+name: bikes_casual_model
+source_run_id: e258b797a7d040409b4940b02d078335
+status: 2
+status_message: null

@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/joel/Projects/tec/mlops/bike_sharing/mlruns/699447129012931764/e258b797a7d040409b4940b02d078335/artifacts
+end_time: 1762648538016
+entry_point_name: ''
+experiment_id: '699447129012931764'
+lifecycle_stage: active
+run_id: e258b797a7d040409b4940b02d078335
+run_name: ElasticNet_alpha-0.1_(Double-Pred)
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762648535093
+status: 3
+tags: []
+user_id: joel

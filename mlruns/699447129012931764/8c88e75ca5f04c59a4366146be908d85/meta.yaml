@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/joel/Projects/tec/mlops/bike_sharing/mlruns/699447129012931764/8c88e75ca5f04c59a4366146be908d85/artifacts
+end_time: 1762648635648
+entry_point_name: ''
+experiment_id: '699447129012931764'
+lifecycle_stage: active
+run_id: 8c88e75ca5f04c59a4366146be908d85
+run_name: LGBMRegressor_n_estimators-400_max_depth-12_learning_rate-0.03_(Double-Pred)
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762648627624
+status: 3
+tags: []
+user_id: joel
