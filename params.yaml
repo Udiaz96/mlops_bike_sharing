@@ -17,6 +17,12 @@ train:
 # MLflow configuration
 mlflow:
   experiment_name: Bike_Sharing_DVC_Pipeline
+  tracking_uri: ./mlruns
+
+# Model output configuration
+models_output:
+  dir: models
+  save_all_configs: false  # If true, saves all configs; if false, saves only best model per type
 
 # Model configurations
 models:

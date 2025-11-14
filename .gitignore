@@ -41,16 +41,6 @@ $RECYCLE.BIN/
 .parquet
 .pkl
 
-# mlflow artifacts handled in dvc
+# MLflow - keep local for experiment tracking only (not versioned)
+mlruns/
 mlartifacts/
-
-# Ignora archivos grandes de MLflow gestionados por DVC
-mlruns/**/artifacts/
-mlruns/models/*/version-*/
-*.dvc.lock
-
-# Mantener metadatos en Git
-!mlruns/**/*.yaml
-!mlruns/**/metrics/
-!mlruns/**/params/
-!mlruns/**/tags/
