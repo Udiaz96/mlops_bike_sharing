@@ -125,7 +125,7 @@ def test_train_model_logs_to_mlflow(mock_mlflow):
     # Ejecutar train_model con RandomForest
     from sklearn.ensemble import RandomForestRegressor
 
-    rmse, run_id, model_name = train_model(
+    rmse, run_id, model_name, _, _, _, _ = train_model(
         model_type=RandomForestRegressor,
         model_name='RandomForest',
         params=params,

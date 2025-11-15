@@ -193,17 +193,7 @@ def main(
 
     # Build the scikit-learn pipeline
     logger.info("\nBuilding pipeline...")
-    pipeline = Pipeline([
-        ('type_casting', TypeCastingTransformer()),
-        ('column_management', ColumnManagementTransformer(original_bike_sharing_df)),
-        ('datetime_cleaning', DateTimeCleaningTransformer()),
-        ('feature_cleaning', FeatureCleaningTransformer()),
-        ('instant_imputation', InstantImputationTransformer()),
-        ('duplicate_handling', DuplicateHandlingTransformer()),
-        ('weather_imputation', WeatherImputationTransformer()),
-        ('count_validation', CountValidationTransformer()),
-        ('final_cleanup', FinalCleanupTransformer()),
-    ])
+    pipeline = pipeline(original_bike_sharing_df)
 
     # Run the pipeline
     logger.info("\nEjecutando el pipeline...")
@@ -220,6 +210,26 @@ def main(
     logger.success("✅ Pipeline completedo exitosamente!")
     logger.success(f"📊 Dimensiones finales del dataset: {bike_sharing_df.shape}")
     logger.success("="*80)
+
+
+def pipeline(original_bike_sharing_df=None):
+    """
+    Construye y retorna el pipeline de limpieza de datos.
+    return: Pipeline
+    """
+    pipeline = Pipeline([
+        ('type_casting', TypeCastingTransformer()),
+        ('column_management', ColumnManagementTransformer(original_bike_sharing_df)),
+        ('datetime_cleaning', DateTimeCleaningTransformer()),
+        ('feature_cleaning', FeatureCleaningTransformer()),
+        ('instant_imputation', InstantImputationTransformer()),
+        ('duplicate_handling', DuplicateHandlingTransformer()),
+        ('weather_imputation', WeatherImputationTransformer()),
+        ('count_validation', CountValidationTransformer()),
+        ('final_cleanup', FinalCleanupTransformer()),
+    ])
+
+    return pipeline
 
 
 # ============================================================================

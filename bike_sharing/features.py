@@ -37,13 +37,7 @@ def main(
     bike_sharing_df = pd.read_csv(input_path)
 
     logger.info("Construyendo pipeline de transformación...")
-    pipeline = Pipeline(steps=[
-        ('log_transformer', LogTransformer()),
-        ('cyclic_transformer', CyclicTransformer()),
-        ('ohe_transformer', OHETransformer()),
-        ('cyclic_scaler', CyclicScalerTransformer()),
-        ('column_droper', ColumnDropperTransformer()),
-    ])
+    pipeline = pipeline()
 
     # Ejecuta el pipeline de transformación
     logger.info("Ejecutando pipeline de transformación...")
@@ -58,6 +52,22 @@ def main(
     logger.success("="*80)
     logger.success("✅ Pipeline completado exitosamente.")
     logger.success("="*80)
+
+def pipeline():
+    """
+    Construye y devuelve el pipeline de transformación.
+
+    Returns:
+        Pipeline: Pipeline de transformación.
+    """
+    pipeline = Pipeline(steps=[
+        ('log_transformer', LogTransformer()),
+        ('cyclic_transformer', CyclicTransformer()),
+        ('ohe_transformer', OHETransformer()),
+        ('cyclic_scaler', CyclicScalerTransformer()),
+        ('column_droper', ColumnDropperTransformer()),
+    ])
+    return pipeline
 
 
 class LogTransformer(BaseEstimator, TransformerMixin):
