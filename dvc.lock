@@ -52,8 +52,8 @@ stages:
     deps:
     - path: bike_sharing/modeling/train.py
       hash: md5
-      md5: f3b006fb7c637023d2024b32b1d1fe7f
-      size: 10844
+      md5: cd7a81f1c7a084815e0680377f626f37
+      size: 14565
     - path: data/processed/bike_sharing_transformed.csv
       hash: md5
       md5: 9054add26646194ac5f6e48c10d24eb9
@@ -62,6 +62,7 @@ stages:
       params.yaml:
         mlflow:
           experiment_name: Bike_Sharing_DVC_Pipeline
+          tracking_uri: ./mlruns
         models.random_forest:
           model_class: RandomForestRegressor
           configs:
@@ -93,17 +94,33 @@ stages:
             min_samples_split: 5
             random_state: 42
             n_jobs: -1
+        models_output:
+          dir: models
+          save_all_configs: false
         train:
           input_path: data/processed/bike_sharing_transformed.csv
           test_size: 0.2
           random_state: 42
+    outs:
+    - path: models/RandomForestRegressor_casual.pkl
+      hash: md5
+      md5: f5217fdec7c360b640ad1d1842b39f16
+      size: 19640490
+    - path: models/RandomForestRegressor_metadata.json
+      hash: md5
+      md5: a8bb7dafa924adf441870e7480908342
+      size: 444
+    - path: models/RandomForestRegressor_registered.pkl
+      hash: md5
+      md5: 6773084b1def89783a1b0a593085579d
+      size: 39253002
   train_elastic_net:
     cmd: python -m bike_sharing.modeling.train elastic_net --batch
     deps:
     - path: bike_sharing/modeling/train.py
       hash: md5
-      md5: f3b006fb7c637023d2024b32b1d1fe7f
-      size: 10844
+      md5: cd7a81f1c7a084815e0680377f626f37
+      size: 14565
     - path: data/processed/bike_sharing_transformed.csv
       hash: md5
       md5: 9054add26646194ac5f6e48c10d24eb9
@@ -112,6 +129,7 @@ stages:
       params.yaml:
         mlflow:
           experiment_name: Bike_Sharing_DVC_Pipeline
+          tracking_uri: ./mlruns
         models.elastic_net:
           model_class: ElasticNet
           configs:
@@ -131,17 +149,33 @@ stages:
             l1_ratio: 0.9
             random_state: 42
             max_iter: 10000
+        models_output:
+          dir: models
+          save_all_configs: false
         train:
           input_path: data/processed/bike_sharing_transformed.csv
           test_size: 0.2
           random_state: 42
+    outs:
+    - path: models/ElasticNet_casual.pkl
+      hash: md5
+      md5: e4313317323e922543d9dbb17057dcd7
+      size: 4854
+    - path: models/ElasticNet_metadata.json
+      hash: md5
+      md5: 7f85f501b6de05c959bb015f55e29aa2
+      size: 414
+    - path: models/ElasticNet_registered.pkl
+      hash: md5
+      md5: eee9f46ddaa6f35aef3b482a3f1955aa
+      size: 4854
   train_svr:
     cmd: python -m bike_sharing.modeling.train svr --batch
     deps:
     - path: bike_sharing/modeling/train.py
       hash: md5
-      md5: f3b006fb7c637023d2024b32b1d1fe7f
-      size: 10844
+      md5: cd7a81f1c7a084815e0680377f626f37
+      size: 14565
     - path: data/processed/bike_sharing_transformed.csv
       hash: md5
       md5: 9054add26646194ac5f6e48c10d24eb9
@@ -150,6 +184,7 @@ stages:
       params.yaml:
         mlflow:
           experiment_name: Bike_Sharing_DVC_Pipeline
+          tracking_uri: ./mlruns
         models.svr:
           model_class: SVR
           configs:
@@ -159,17 +194,33 @@ stages:
           - kernel: rbf
             C: 1
             epsilon: 0.05
+        models_output:
+          dir: models
+          save_all_configs: false
         train:
           input_path: data/processed/bike_sharing_transformed.csv
           test_size: 0.2
           random_state: 42
+    outs:
+    - path: models/SVR_casual.pkl
+      hash: md5
+      md5: 5e4190497542f406910bff41f3f48236
+      size: 18576495
+    - path: models/SVR_metadata.json
+      hash: md5
+      md5: 158bd70298ff5a9f235b7f1983e7fc6a
+      size: 361
+    - path: models/SVR_registered.pkl
+      hash: md5
+      md5: e0cb71721bacaab593329f3a5b44f518
+      size: 18133815
   train_xgboost:
     cmd: python -m bike_sharing.modeling.train xgboost --batch
     deps:
     - path: bike_sharing/modeling/train.py
       hash: md5
-      md5: f3b006fb7c637023d2024b32b1d1fe7f
-      size: 10844
+      md5: cd7a81f1c7a084815e0680377f626f37
+      size: 14565
     - path: data/processed/bike_sharing_transformed.csv
       hash: md5
       md5: 9054add26646194ac5f6e48c10d24eb9
@@ -178,6 +229,7 @@ stages:
       params.yaml:
         mlflow:
           experiment_name: Bike_Sharing_DVC_Pipeline
+          tracking_uri: ./mlruns
         models.xgboost:
           model_class: XGBRegressor
           configs:
@@ -197,17 +249,33 @@ stages:
             max_depth: 5
             random_state: 42
             learning_rate: 0.05
+        models_output:
+          dir: models
+          save_all_configs: false
         train:
           input_path: data/processed/bike_sharing_transformed.csv
           test_size: 0.2
           random_state: 42
+    outs:
+    - path: models/XGBRegressor_casual.pkl
+      hash: md5
+      md5: 7f539f943bbdcb2371060ecd5ec783be
+      size: 305207
+    - path: models/XGBRegressor_metadata.json
+      hash: md5
+      md5: 8627e5a2fada08815fba26b15e0f1931
+      size: 425
+    - path: models/XGBRegressor_registered.pkl
+      hash: md5
+      md5: c997ea5ef27fd2a7e65bd68c42b61ab9
+      size: 324997
   train_lightgbm:
     cmd: python -m bike_sharing.modeling.train lightgbm --batch
     deps:
     - path: bike_sharing/modeling/train.py
       hash: md5
-      md5: f3b006fb7c637023d2024b32b1d1fe7f
-      size: 10844
+      md5: cd7a81f1c7a084815e0680377f626f37
+      size: 14565
     - path: data/processed/bike_sharing_transformed.csv
       hash: md5
       md5: 9054add26646194ac5f6e48c10d24eb9
@@ -216,6 +284,7 @@ stages:
       params.yaml:
         mlflow:
           experiment_name: Bike_Sharing_DVC_Pipeline
+          tracking_uri: ./mlruns
         models.lightgbm:
           model_class: LGBMRegressor
           configs:
@@ -239,7 +308,23 @@ stages:
             random_state: 42
             learning_rate: 0.05
             n_jobs: -1
+        models_output:
+          dir: models
+          save_all_configs: false
         train:
           input_path: data/processed/bike_sharing_transformed.csv
           test_size: 0.2
           random_state: 42
+    outs:
+    - path: models/LGBMRegressor_casual.pkl
+      hash: md5
+      md5: b344fee6e1d8ab3667d6502950cf4da8
+      size: 1206233
+    - path: models/LGBMRegressor_metadata.json
+      hash: md5
+      md5: 2856e1dc218ccc98a87b704434881d12
+      size: 449
+    - path: models/LGBMRegressor_registered.pkl
+      hash: md5
+      md5: 79d5bea8454110d59f6ab4ed3db67b8b
+      size: 1203323

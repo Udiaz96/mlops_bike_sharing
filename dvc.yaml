@@ -36,7 +36,12 @@ stages:
     params:
       - train
       - mlflow
+      - models_output
       - models.random_forest
+    outs:
+      - models/RandomForestRegressor_casual.pkl
+      - models/RandomForestRegressor_registered.pkl
+      - models/RandomForestRegressor_metadata.json
 
   train_elastic_net:
     cmd: python -m bike_sharing.modeling.train elastic_net --batch
@@ -46,7 +51,12 @@ stages:
     params:
       - train
       - mlflow
+      - models_output
       - models.elastic_net
+    outs:
+      - models/ElasticNet_casual.pkl
+      - models/ElasticNet_registered.pkl
+      - models/ElasticNet_metadata.json
 
   train_svr:
     cmd: python -m bike_sharing.modeling.train svr --batch
@@ -56,7 +66,12 @@ stages:
     params:
       - train
       - mlflow
+      - models_output
       - models.svr
+    outs:
+      - models/SVR_casual.pkl
+      - models/SVR_registered.pkl
+      - models/SVR_metadata.json
 
   train_xgboost:
     cmd: python -m bike_sharing.modeling.train xgboost --batch
@@ -66,7 +81,12 @@ stages:
     params:
       - train
       - mlflow
+      - models_output
       - models.xgboost
+    outs:
+      - models/XGBRegressor_casual.pkl
+      - models/XGBRegressor_registered.pkl
+      - models/XGBRegressor_metadata.json
 
   train_lightgbm:
     cmd: python -m bike_sharing.modeling.train lightgbm --batch
@@ -76,4 +96,9 @@ stages:
     params:
       - train
       - mlflow
+      - models_output
       - models.lightgbm
+    outs:
+      - models/LGBMRegressor_casual.pkl
+      - models/LGBMRegressor_registered.pkl
+      - models/LGBMRegressor_metadata.json

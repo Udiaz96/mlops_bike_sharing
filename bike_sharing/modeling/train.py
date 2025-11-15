@@ -1,5 +1,8 @@
 import warnings
 from pathlib import Path
+import json
+import pickle
+import os
 
 import numpy as np
 import pandas as pd
@@ -15,6 +18,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
 import mlflow
 import mlflow.sklearn
+from mlflow.models import infer_signature
 
 from loguru import logger
 from tqdm import tqdm
@@ -75,22 +79,79 @@ def train_model(model_type, model_name, params, X_train, X_test, y_casual_train,
         mlflow.log_metric('RMSE', rmse)
         mlflow.log_metric('MAE', mae)
 
+        # Infer model signatures and create input examples
+        casual_signature = infer_signature(X_train, y_pred_casual_log)
+        registered_signature = infer_signature(X_train, y_pred_registered_log)
+        input_example = X_train.head(3)
+
         mlflow.sklearn.log_model(
             sk_model=model_casual_total,
-            name='bikes_casual_model', 
-            registered_model_name=f'{model_name}_Casual_BikeSharing'
+            artifact_path='bikes_casual_model',
+            registered_model_name=f'{model_name}_Casual_BikeSharing',
+            signature=casual_signature,
+            input_example=input_example
         )
-        
+
         mlflow.sklearn.log_model(
             sk_model=model_registered_total,
-            name='bikes_registered_model', 
-            registered_model_name=f'{model_name}_Registered_BikeSharing'
+            artifact_path='bikes_registered_model',
+            registered_model_name=f'{model_name}_Registered_BikeSharing',
+            signature=registered_signature,
+            input_example=input_example
         )
 
         logger.info(f'Run {run_name} completed. Double-RMSE: {rmse:.2f}')
 
-        return rmse, run.info.run_id, model_name
-    
+        return rmse, run.info.run_id, model_name, model_casual_total, model_registered_total, {'R2': r2, 'RMSE': rmse, 'MAE': mae}, params
+
+
+def save_models_to_disk(model_name, model_casual, model_registered, metrics, params, run_id, models_dir):
+    """
+    Save trained models and metadata to disk for DVC tracking.
+
+    Args:
+        model_name: Name of the model type (e.g., 'RandomForestRegressor')
+        model_casual: Trained casual bike model
+        model_registered: Trained registered bike model
+        metrics: Dictionary of evaluation metrics
+        params: Model hyperparameters
+        run_id: MLflow run ID
+        models_dir: Directory to save models
+    """
+    models_path = Path(models_dir)
+    models_path.mkdir(parents=True, exist_ok=True)
+
+    # Save casual model
+    casual_model_path = models_path / f'{model_name}_casual.pkl'
+    with open(casual_model_path, 'wb') as f:
+        pickle.dump(model_casual, f)
+
+    # Save registered model
+    registered_model_path = models_path / f'{model_name}_registered.pkl'
+    with open(registered_model_path, 'wb') as f:
+        pickle.dump(model_registered, f)
+
+    # Save metadata
+    metadata = {
+        'model_name': model_name,
+        'metrics': metrics,
+        'params': params,
+        'mlflow_run_id': run_id,
+        'model_files': {
+            'casual': str(casual_model_path.name),
+            'registered': str(registered_model_path.name)
+        }
+    }
+
+    metadata_path = models_path / f'{model_name}_metadata.json'
+    with open(metadata_path, 'w') as f:
+        json.dump(metadata, f, indent=2)
+
+    logger.info(f'Saved models to {models_path}:')
+    logger.info(f'  - {casual_model_path.name}')
+    logger.info(f'  - {registered_model_path.name}')
+    logger.info(f'  - {metadata_path.name}')
+
 
 # Removed EXPERIMENT_PARAMS - now using params.yml
 
@@ -153,9 +214,19 @@ def main(
     test_split = test_size if test_size is not None else train_config['test_size']
     rand_state = random_state if random_state is not None else train_config['random_state']
 
-    # Set MLflow experiment
+    # Get models output configuration
+    models_output_config = params_config.get('models_output', {'dir': 'models', 'save_all_configs': False})
+    models_dir = models_output_config['dir']
+    save_all_configs = models_output_config['save_all_configs']
+
+    # Set MLflow tracking URI and experiment
+    tracking_uri = params_config['mlflow'].get('tracking_uri', './mlruns')
+    mlflow.set_tracking_uri(tracking_uri)
     experiment_name = params_config['mlflow']['experiment_name']
     mlflow.set_experiment(experiment_name)
+
+    logger.info(f'MLflow tracking URI: {tracking_uri}')
+    logger.info(f'MLflow experiment: {experiment_name}')
 
     # Validate model type
     if model_type not in MODEL_REGISTRY:
@@ -249,9 +320,17 @@ def main(
     total_runs = len(configs)
     logger.info(f'Initiating {total_runs} training run(s)')
 
+    # Track best model
+    best_rmse = float('inf')
+    best_model_casual = None
+    best_model_registered = None
+    best_metrics = None
+    best_params = None
+    best_run_id = None
+
     with tqdm(total=total_runs, desc=f'Training {model_name}') as pbar:
         for params in configs:
-            train_model(
+            rmse, run_id, _, model_casual, model_registered, metrics, model_params = train_model(
                 model_type=model_class,
                 model_name=model_name,
                 params=params,
@@ -262,7 +341,30 @@ def main(
                 y_registered_train=y_registered_train,
                 y_registered_test=y_registered_test
             )
+
+            # Track best model by RMSE
+            if rmse < best_rmse:
+                best_rmse = rmse
+                best_model_casual = model_casual
+                best_model_registered = model_registered
+                best_metrics = metrics
+                best_params = model_params
+                best_run_id = run_id
+
             pbar.update(1)
+
+    # Save the best model to disk for DVC tracking
+    logger.info('-'*80)
+    logger.info(f'Best model RMSE: {best_rmse:.2f}')
+    save_models_to_disk(
+        model_name=model_name,
+        model_casual=best_model_casual,
+        model_registered=best_model_registered,
+        metrics=best_metrics,
+        params=best_params,
+        run_id=best_run_id,
+        models_dir=models_dir
+    )
 
     logger.success(f'{model_name} training completed successfully.')
     logger.info('-'*80)
