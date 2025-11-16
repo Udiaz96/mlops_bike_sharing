@@ -58,8 +58,8 @@ def build_full_pipeline(bike_sharing_df: pd.DataFrame):
     logger.info("\nBuilding pipeline...")
 
     full_pipeline = Pipeline([
-        ('dataset', dataset_pipeline(original_bike_sharing_df)),
-        ('features', features_pipeline())
+        ('dataset', dataset_pipeline(original_bike_sharing_df))
+        #('features', features_pipeline())
     ])
 
     logger.debug(f"🧱 Pipeline creado: {full_pipeline}")
