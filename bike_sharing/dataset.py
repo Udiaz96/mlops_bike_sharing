@@ -1,5 +1,5 @@
 """
-Bike Sharing Pipeline de Limpieza de Datos
+Bike Sharing clear de Limpieza de Datos
 
 Este modulo implementa un pipeline de limpieza de datos utilizando scikit-learn
 
@@ -193,7 +193,7 @@ def main(
 
     # Build the scikit-learn pipeline
     logger.info("\nBuilding pipeline...")
-    pipeline = pipeline(original_bike_sharing_df)
+    pipeline = build_pipeline(original_bike_sharing_df)
 
     # Run the pipeline
     logger.info("\nEjecutando el pipeline...")
@@ -212,7 +212,7 @@ def main(
     logger.success("="*80)
 
 
-def pipeline(original_bike_sharing_df=None):
+def build_pipeline(original_bike_sharing_df=None):
     """
     Construye y retorna el pipeline de limpieza de datos.
     return: Pipeline

@@ -37,7 +37,7 @@ def main(
     bike_sharing_df = pd.read_csv(input_path)
 
     logger.info("Construyendo pipeline de transformación...")
-    pipeline = pipeline()
+    pipeline = build_pipeline()
 
     # Ejecuta el pipeline de transformación
     logger.info("Ejecutando pipeline de transformación...")
@@ -53,7 +53,7 @@ def main(
     logger.success("✅ Pipeline completado exitosamente.")
     logger.success("="*80)
 
-def pipeline():
+def build_pipeline():
     """
     Construye y devuelve el pipeline de transformación.
 
